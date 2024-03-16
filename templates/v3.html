@@ -47,10 +47,10 @@
             <section class="video-url-section" id="video-url-section">
                 <div class="search-bar-video-url-section">
                     <input type="text" id="video-url" name="video-url" placeholder="video url" autocomplete="off" required />
-                    <p id="video-url-btn">Download</a>
+                    <p id="video-url-btn">Download</p>
                 </div>
                 <div class="error" id="error">
-                    <p id="errorP">Errororor</p>
+                    <p id="errorP">Error</p>
                 </div>
                 <div class="video-url-section-container" id="video-url-section-container">
                     <div class="video-url-section-image img-skeleton" id="video-url-section-image" style="--skeleton-height: 22rem;--skeleton-width: 100%;">
@@ -58,66 +58,136 @@
                     </div>
 
                     <div class="video-title text-skeleton" id="video-title-id"  style="--text-skeleton-width: 100%;">
-                        <p id="video-title"></p> 
+                        <p id="video-title"></p>
                         <span id="video-duration"></span>
                     </div>
+                    <div class="video-cut-section">
+                        <label for="time-input-start">Start:</label>
+                        <input type="text" id="time-input-start" name="start_time" size="10" minlength="0" maxlength="8"
+                               pattern="[0-2][0-9]:[0-5][0-9]:[0-5][0-9]" placeholder="hh:mm:ss">
+                        <label for="time-input-end">End:</label>
+                        <input type="text" id="time-input-end" name="end_time" size="10" minlength="0" maxlength="8"
+                               pattern="[0-2][0-9]:[0-5][0-9]:[0-5][0-9]" placeholder="hh:mm:ss">
+                        <p id="video-clip-btn">Cut Video Clip</p>
+                    </div>
+                    <section class="video-url-section-video-clip" id="video-url-section-video-clip">
+                        <div class="video-url-container-tab-options">
+                            <p id="video-url-tab-video-clip" class="active-video-url-clip-tab-options">Video Clip</p>
+                            <p id="video-url-tab-audio-clip">Audio Clip</p>
+                        </div>
+                        <div class="video-url-tab-clip-container" id="video-url-tab-clip-container">
+                            <div class="video-url-tab-video-clip-container">
+                                <div class="video-url-clip-tab-cards" id="video-url-clip-tab-cards">
+                                    <div class="video-url-card-items card-skeleton" >
+
+                                    </div>
+                                    <div class="video-url-card-items card-skeleton">
+
+                                    </div>
+                                    <div class="video-url-card-items card-skeleton">
+
+                                    </div>
+                                    <div class="video-url-card-items card-skeleton">
+
+                                    </div>
+                                    <div class="video-url-card-items card-skeleton">
+
+                                    </div>
+                                    <div class="video-url-card-items card-skeleton">
+
+                                    </div>
+                                    <div class="video-url-card-items card-skeleton">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="video-url-tab-audio-clip-container" id="video-url-tab-audio-clip-container">
+                                <div class="video-url-clip-tab-cards" id="audio-url-clip-tab-cards">
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                            </div>
+                            </div>
+
+
+                    </section>
 
                     <div class="video-url-container-tab-options">
-                        <p id="video-url-tab-video" class="active-video-url-tab-options">Video</p>
-                        <p id="video-url-tab-audio">Audio</p>
+                        <p id="video-url-tab-video" class="active-video-url-tab-options">Video Full</p>
+                        <p id="video-url-tab-audio">Audio Full</p>
                     </div>
                     <div class="video-url-tab-container" id="video-url-tab-container">
                         <div class="video-url-tab-video-container">
                             <div class="video-url-tab-cards" id="video-url-tab-cards">
                                 <div class="video-url-card-items card-skeleton" >
-                                    
+
                                 </div>
                                 <div class="video-url-card-items card-skeleton">
-                                    
+
                                 </div>
                                 <div class="video-url-card-items card-skeleton">
-                                    
+
                                 </div>
                                 <div class="video-url-card-items card-skeleton">
-                                    
+
                                 </div>
                                 <div class="video-url-card-items card-skeleton">
-                                    
+
                                 </div>
                                 <div class="video-url-card-items card-skeleton">
-                                    
+
                                 </div>
                                 <div class="video-url-card-items card-skeleton">
-                                    
+
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="video-url-tab-audio-container" id="video-url-tab-audio-container">
-                        <div class="video-url-tab-cards" id="audio-url-tab-cards">
-                            <div class="video-url-card-items card-skeleton">
-                                
-                            </div>
-                            <div class="video-url-card-items card-skeleton">
-                                
-                            </div>
-                            <div class="video-url-card-items card-skeleton">
-                                
-                            </div>
-                            <div class="video-url-card-items card-skeleton">
-                                
-                            </div>
-                            <div class="video-url-card-items card-skeleton">
-                                
-                            </div>
-                            <div class="video-url-card-items card-skeleton">
-                                
-                            </div>
-                            <div class="video-url-card-items card-skeleton">
-                                
+                        <div class="video-url-tab-audio-container" id="video-url-tab-audio-container">
+                            <div class="video-url-tab-cards" id="audio-url-tab-cards">
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
+                                <div class="video-url-card-items card-skeleton">
+
+                                </div>
                             </div>
                         </div>
-                    </div>
+
                 </div>
             </section>
 
@@ -127,7 +197,7 @@
                     <p id="search-video-btn">Search</a>
                 </div>
                 <div class="error" id="error-ss">
-                    <p id="errorP-ss">Errororor</p>
+                    <p id="errorP-ss">Error</p>
                 </div>
 
                 <div class="searchSection-container" id="searchSection-container">
@@ -188,7 +258,7 @@
 
         <div class="footer">
             <div class="footer-container">
-                <p>DONE ' BY THARUNESHWAR</p>
+                <p>DONE : BY THARUNESHWAR</p>
             </div>
         </div>
 

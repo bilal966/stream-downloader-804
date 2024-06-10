@@ -7,13 +7,28 @@ $("#video-url-tab-audio").click(()=>{
     document.getElementById("video-url-tab-container").style.display = "none";  
     document.getElementById("video-url-tab-audio-container").style.display = "block";
 });
+$("#video-url-tab-audio-clip").click(()=>{
+    document.getElementById("video-url-tab-video-clip").classList.remove('active-video-url-clip-tab-options');
+    document.getElementById("video-url-tab-audio-clip").classList.add('active-video-url-clip-tab-options');
+
+    document.getElementById("video-url-tab-clip-container").style.display = "none";
+    document.getElementById("video-url-tab-audio-clip-container").style.display = "block";
+});
 
 $("#video-url-tab-video").click(()=>{
     document.getElementById("video-url-tab-audio").classList.remove('active-video-url-tab-options');
     document.getElementById("video-url-tab-video").classList.add('active-video-url-tab-options');
-    
-    document.getElementById("video-url-tab-container").style.display = "block";  
+
+    document.getElementById("video-url-tab-container").style.display = "block";
     document.getElementById("video-url-tab-audio-container").style.display = "none";
+});
+
+$("#video-url-tab-video-clip").click(()=>{
+    document.getElementById("video-url-tab-video-clip").classList.remove('active-video-url-clip-tab-options');
+    document.getElementById("video-url-tab-video-clip").classList.add('active-video-url-clip-tab-options');
+
+    document.getElementById("video-url-tab-clip-container").style.display = "block";
+    document.getElementById("audio-url-clip-tab-cards").style.display = "none";
 });
 
 $("#tab-options-vu").click(()=>{
@@ -57,6 +72,9 @@ $("#video-url-btn").click(()=>searchVideoByUrl());
 
 $("#search-video-btn").click(()=>searchVideoBtnClick())
 
+$("#video-clip-btn").click(()=>cutVideoClipBtnClick())
+
+
 
 
 
@@ -92,7 +110,25 @@ function searchVideoBtnClick(){
 
         new AjaxCalls().searchVideo($("#search-video-name").val())
 
-        
+
+    }
+}
+
+function cutVideoClipBtnClick(){
+    let videoClipSectionContainer = document.getElementById("video-url-section-video-clip");
+
+    if ($("#time-input-start").val().length === 0){
+        //err, open, errorRoot="error", errorP = "errorP", sectionToHide=null
+        Error(err=" *Start time is missing", open=true, errorRoot="error-ss", errorP='errorP-ss');
+        videoClipSectionContainer.style.display = "none";
+    } else {
+        Error("", false);
+        videoClipSectionContainer.style.display = "block";
+        alert($("#time-input-start").val());
+        alert($("#time-input-end").val());
+
+       // new AjaxCalls().searchVideo($("#search-video-name").val())
+
     }
 }
 
@@ -125,7 +161,7 @@ class searchSectionUpdate {
 
 
         this.data.forEach(d=>{
-            let ssCard = document.createElement("div"); 
+            let ssCard = document.createElement("div");
             ssCard.className = "search-section-card";
 
             let ssCardLeft = document.createElement("div");
@@ -176,7 +212,7 @@ class searchSectionUpdate {
                 document.getElementById('video-url-section').style.display="block";
                 document.getElementById('searchby-section').style.display="none";
                 document.getElementById('playlist-section').style.display="none";
-            
+
 
                 $("#video-url").val(d.video_url);
 
@@ -191,6 +227,8 @@ class searchSectionUpdate {
                     videoUrlSectionContainer.style.display = "block";
 
                     new AjaxCalls().getBasicDetails($("#video-url").val());
+
+                    new AjaxCalls().getStreamedData($("#video-url").val());
 
                     new AjaxCalls().getStreamedData($("#video-url").val());
 
@@ -212,14 +250,13 @@ class updateBasicDetails {
             this.title = data.title.title;
             this.thumbnail_url = data.thumbnail_url.thumbnail_url;
             this.duration = data.duration;
-        }
-        catch(e) {
+        } catch(e) {
             this.audio_data = data.audio_itag;
             this.video_data = data.video_itag;
         }
         this.removeSkeleton = new removeSkeleton();
     }
-    
+
     updateBasicDetails() {
         this.removeSkeleton.removeTextSkeleton("video-title-id");
         document.getElementById('video-title').innerHTML = this.title;
@@ -229,13 +266,13 @@ class updateBasicDetails {
         document.getElementById('video-url-section-image').innerHTML = `<img src='${this.thumbnail_url}' alt='${this.title}' />`
     }
 
-    createAudioVideoCards(rootTag, data, cardClass, type) {
-
+    createAudioVideoCards(rootTag, data, cardClass, type, isClip) {
+        console.log(type+''+isClip)
         let cardItems = document.createElement('div');
         cardItems.classList.add(cardClass);
         cardItems.setAttribute('itag', data['itag']);
 
-        cardItems.id="card-"+type+data['itag'];
+        cardItems.id="card-"+(isClip?'clip':'')+type+data['itag'];
 
         let typeP = document.createElement("p");
         let resP = document.createElement("p");
@@ -243,18 +280,16 @@ class updateBasicDetails {
 
         typeP.innerHTML = (type === "video") ? data['mime_type'] : (data['mime_type'] === 'mp4') ? "mp3" : data['mime_type'];
         resP.innerHTML = (type === 'video') ? data['res'] : data['abr'] ;
-        
+
         if (type==='video') {
             if (data['as_audio'] === true) {
                 icon.className = "video-url-card-items-volume-up";
                 icon.innerHTML = `<i class='fa fa-volume-high'> </i>`;
-            }
-            else {
+            } else {
                 icon.className = "video-url-card-items-volume-mute";
                 icon.innerHTML = `<i class='fa fa-volume-mute'> </i>`;
             }
-        }
-        else {
+        } else {
             icon.className = "video-url-card-items-volume-up";
             icon.innerHTML = `<i class='fa fa-volume-high'> </i>`;
         }
@@ -263,12 +298,22 @@ class updateBasicDetails {
         cardItems.appendChild(resP);
         cardItems.appendChild(icon);
 
-        rootTag.appendChild(cardItems); 
+        rootTag.appendChild(cardItems);
 
-        $("#card-"+type+data['itag']).click(function () { 
+
+        if(isClip) {
+            $("#card-clip"+type+data['itag']).click(function () {
+                //console.log(data['itag'])
+                new AjaxCalls().downlaodClipByItag(data['itag'], $("#video-url").val(),$("#time-input-start").val(),$("#time-input-end").val())
+           });
+        } else {
+            $("#card-"+type+data['itag']).click(function () {
             //console.log(data['itag'])
             new AjaxCalls().downlaodByItag(data['itag'], $("#video-url").val())
-        });  
+           });
+        }
+
+
     }
 
     updateStreamsData() {
@@ -281,11 +326,10 @@ class updateBasicDetails {
         try {
             videoStreamTag.innerHTML = "";
             this.video_data.forEach(vd => {
-                //console.log(vd)
-                this.createAudioVideoCards(videoStreamTag, vd, "video-url-card-items", "video")
+                console.log(vd)
+                this.createAudioVideoCards(videoStreamTag, vd, "video-url-card-items", "video",false)
             });
-        }
-        catch (e) {
+        } catch (e) {
             videoStreamTag.innerHTML = `
                 <div class='error' id='video-url-tab-cards-error'>
                     <p class='errorP' id='video-url-tab-cards-errorP'>No data found</p>
@@ -303,7 +347,7 @@ class updateBasicDetails {
             audioStreamTag.innerHTML = "";
             this.audio_data.forEach(ad => {
             //console.log(ad)
-                this.createAudioVideoCards(audioStreamTag, ad, "video-url-card-items", "audio")
+                this.createAudioVideoCards(audioStreamTag, ad, "video-url-card-items", "audio",false)
             });
         }
         catch (e) {
@@ -313,7 +357,53 @@ class updateBasicDetails {
                 </div>
             `;
             Error(" *No data found", true, 'audio-url-tab-cards-error', 'audio-url-tab-cards-errorP', null);
-        }        
+        }
+
+    }
+
+    updateClipStreamsData() {
+        try {
+            this.removeSkeleton.removeCardSkeleton("video-url-clip-tab-cards");
+
+        }
+        catch (e) {}
+
+        let videoStreamTag = document.getElementById("video-url-clip-tab-cards");
+        try {
+            videoStreamTag.innerHTML = "";
+            this.video_data.forEach(vd => {
+                console.log(vd)
+                this.createAudioVideoCards(videoStreamTag, vd, "video-url-card-items", "video",true)
+            });
+        }catch (e) {
+            videoStreamTag.innerHTML = `
+                <div class='error' id='video-url-tab-cards-error'>
+                    <p class='errorP' id='video-url-tab-cards-errorP'>No data found</p>
+                </div>
+            `;
+            Error(" *No data found", true, 'video-url-tab-cards-error', 'video-url-tab-cards-errorP', null);
+        }
+
+        try {this.removeSkeleton.removeCardSkeleton("audio-url-clip-tab-cards");}
+        catch (e) {}
+
+        let audioStreamTag = document.getElementById("audio-url-clip-tab-cards");
+
+        try {
+            audioStreamTag.innerHTML = "";
+            this.audio_data.forEach(ad => {
+            //console.log(ad)
+                this.createAudioVideoCards(audioStreamTag, ad, "video-url-card-items", "audio",true)
+            });
+        }
+        catch (e) {
+            audioStreamTag.innerHTML = `
+                <div class='error' id='audio-url-tab-cards-error'>
+                    <p class='errorP' id='audio-url-tab-cards-errorP'>No data found</p>
+                </div>
+            `;
+            Error(" *No data found", true, 'audio-url-tab-cards-error', 'audio-url-tab-cards-errorP', null);
+        }
 
     }
 
@@ -322,6 +412,7 @@ class updateBasicDetails {
 
 class AjaxCalls {
     downlaodByItag(itag, video_url){
+        console.log('downlaodByItag Parameters: itag:'+itag+',video_url:'+video_url)
         $.ajax({
             type: "POST",
             url: "/downloadByItag",
@@ -332,9 +423,34 @@ class AjaxCalls {
             contentType: "application/json",
             dataType: 'json',
             success: function (response) {
-                //console.log(response)
-                let a = document.createElement("a");    
+                console.log(response)
+                let a = document.createElement("a");
                 a.href = response['url'];
+                a.target = "_blank";
+                a.click();
+            }
+        });
+    }
+
+    downlaodClipByItag(itag, video_url, time_start, time_end){
+        console.log('downlaodClipByItag Parameters: itag:'+itag+',video_url:'+video_url+'time_start:'+time_start+',time_end:'+time_end)
+        $.ajax({
+            type: "POST",
+            url: "/downloadClipByItag",
+            data: JSON.stringify({
+                "video-url": video_url,
+                "itag": itag,
+                "time_start": time_start,
+                "time_end": time_end
+            }),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (response) {
+                console.log(response)
+                let download_api_endpoint = "/downloadCroppedVideo?file_name="+response['file_name'];
+                console.log(download_api_endpoint)
+                let a = document.createElement("a");
+                a.href = download_api_endpoint
                 a.target = "_blank";
                 a.click();
             }
@@ -377,9 +493,9 @@ class AjaxCalls {
                 console.log(response)
                 if (response['status']) {
                     new updateBasicDetails(response).updateStreamsData();
-                }
-                else {
-                    
+                    new updateBasicDetails(response).updateClipStreamsData();
+                    document.getElementById("video-url-section-video-clip").style.display="none";
+                } else {
                     document.getElementById("video-url-tab-cards").innerHTML = `
                         <div class='error' id='video-url-tab-container-error'>
                             <p class='errorP' id='video-url-tab-container-errorP'>${response['error']}</p>

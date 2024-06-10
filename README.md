@@ -9,7 +9,7 @@
 
 > # Screenshots
 > 
-> <img src="https://github.com/THARUNESHWAR-369/youtube-video-audio-downloader/blob/main/images/look1.png" width="800"/> <img src="https://github.com/THARUNESHWAR-369/youtube-video-audio-downloader/blob/main/images/look2.png" width="800"/>
+> <img src="https://github.com/bilal966/stream-downloader-804/blob/main/images/look1.png" width="800"/> <img src="https://github.com/THARUNESHWAR-369/youtube-video-audio-downloader/blob/main/images/look2.png" width="800"/>
 
 ## How to run.
 > ```$ git clone https://github.com/bilal966/stream-downloader-804.git```

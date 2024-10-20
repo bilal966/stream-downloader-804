@@ -1,4 +1,4 @@
-from pytube import YouTube
+from pytubefix import YouTube
 from pytube.exceptions import AgeRestrictedError
 from .utils import formatDuration, AgeRestrictedVideoException
 import requests
@@ -48,6 +48,14 @@ class YouTubeVideoDownloader:
 
     def __getDuration(self) -> str:
         return formatDuration(self.__yt.length)
+
+    def __getVideoId(self) -> str:
+        try:
+            return self.__yt.video_id
+        except:
+            return {
+                "status": False
+            }
 
     def __getTitle(self) -> str:
         try:
@@ -146,7 +154,8 @@ class YouTubeVideoDownloader:
                 "status": True,
                 "title": self.__getTitle(),
                 "thumbnail_url": self.__getThumbnail_url(),
-                "duration": self.__getDuration()
+                "duration": self.__getDuration(),
+                "video_id": self.__getVideoId()
             }
         except:
             return {

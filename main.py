@@ -1,18 +1,23 @@
-import subprocess, os
+import os
+import math
 from moviepy.editor import VideoFileClip
 from flask import Flask, request, send_file
 from flask import render_template
-from youtube_transcript_api import YouTubeTranscriptApi
-from utils.ytVideoDownloader import YouTubeVideoDownloader
-from utils.downloadBySearch import DownloadBySearch
-
-from pytube.exceptions import RegexMatchError
+from server.utils.ytVideoDownloader import YouTubeVideoDownloader
+from server.utils.downloadBySearch import DownloadBySearch
+from pytubefix.helpers import regex_search
+from pytubefix.exceptions import RegexMatchError
 
 # create app instance
-app = Flask(__name__)
+# app = Flask(__name__)
+app = Flask(
+        __name__,
+        template_folder='client/templates',
+        static_folder='client/static'
+    )
 
 # secret key
-app.config['SECRET_KEY'] = ""
+app.config['SECRET_KEY'] = "AIzaSyDAs1GMYdmiF2JVXpdInFnsVK65Dr3vY98"
 
 # methods
 methods = ['POST', "GET"]
@@ -21,7 +26,19 @@ methods = ['POST', "GET"]
 home_route = '/'
 
 # Log prefix
-log_prefix = 'StreamDownloader804- '
+log_prefix = 'stream-downloader804-'
+
+# generate content directory
+app_directory = os.path.abspath(os.getcwd())
+video_content_path = app_directory + "/video_content"
+videos_path = video_content_path+"/videos"
+clips_path = video_content_path+"/clips"
+isExist = os.path.exists(videos_path)
+if not isExist:
+    os.makedirs(videos_path)
+isExist = os.path.exists(clips_path)
+if not isExist:
+    os.makedirs(clips_path)
 
 @app.route(home_route, methods=["GET"])
 def home():
@@ -34,7 +51,7 @@ def getBasicDetails():
     # print(video_url)
     try:
         yt = YouTubeVideoDownloader(video_url).getBasicDetails()
-        print(log_prefix, "basic data: ", yt)
+        print(log_prefix, "video basic data: ", yt)
         return yt
     except RegexMatchError:
         return {"status": False}
@@ -68,9 +85,11 @@ def downloadClipByItag():
     time_end = request.get_json()['time_end']
 
     try:
+        video_id = regex_search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", video_url, group=1)
         stream = YouTubeVideoDownloader(video_url).downloadByItag(itag)
-        print(log_prefix, stream.default_filename)
+        print(log_prefix, video_id,stream,stream.default_filename)
 
+        #Signed video url
         video_url = stream.url
         # Load the video from the URL
         video = VideoFileClip(video_url)
@@ -82,14 +101,15 @@ def downloadClipByItag():
         # Cut the video
         cut_video = video.subclip(time_start, time_end)
         # downloadable file name
-        video_filename = str(itag) + "_" + time_start + "_" + time_end + "_" + stream.default_filename.replace(" ", "_")
-        if os.path.exists(video_filename):
+        video_filename = str(itag) + "_" + time_start + "_" + time_end + "_" + video_id+".mp4"
+        video_file_path = videos_path+'/'+video_filename
+        if os.path.exists(video_file_path):
             print(log_prefix, "File exists.", video_filename)
         else:
-            print(log_prefix, "File does not exist.")
+            print(log_prefix, "File does not exist.",video_filename)
             # Save the cut video to a file
-            cut_video.write_videofile(video_filename, audio_codec='aac')
-
+            cut_video.write_videofile(video_file_path, audio_codec='aac', threads=4)
+        cut_video.close()
         # response = send_file(f"{video_filename}", as_attachment=True)
         # os.remove(f"{video_filename}")
         return {"status": True, "url": stream.url, "file_name": video_filename}
@@ -103,10 +123,51 @@ def downloadClipByItag():
 def downloadCroppedVideo():
     print(log_prefix, "Start downloading cropped video")
     video_filename = request.args.get("file_name")
-    # downloadable file name
-    response = send_file(f"{video_filename}", as_attachment=True)
-    # os.remove(f"{video_filename}")
-    return response
+    try:
+        # downloadable file name
+        response = send_file(f"{videos_path+'/'+video_filename}", as_attachment=True,etag=False)
+        # os.remove(f"{video_filename}")
+        return response
+    except:
+        return {"Status":False, "ErrorMessage":"Internal Server Error.File not available."}
+
+
+@app.route('/cutVideoClips', methods=["GET"])
+def cutVideoClips():
+    print(log_prefix, "Start cutting video into clips.")
+    video_filename = 'WcJwYVEarXs_dchowk_protest.mp4'
+    video_id = 'WcJwYVEarXs'
+    video_clips_path = clips_path+'/'+video_id
+    try:
+        fullDuration = VideoFileClip(videos_path+'/'+video_filename).duration
+        print('Video file duration in seconds:', fullDuration)
+        # clip length in seconds
+        clipDuration = 180
+        no_of_clips = math.floor(fullDuration/clipDuration)
+        single_duration = fullDuration / no_of_clips
+        print('Start generating video clips process.')
+        isExist = os.path.exists(video_clips_path)
+        if not isExist:
+            os.makedirs(video_clips_path)
+
+        while no_of_clips > 0:
+            print('Preparing video clip:'+str(no_of_clips))
+            clip = VideoFileClip(videos_path+'/'+video_filename)
+            if(no_of_clips==1):
+                clip = clip.subclip(0, fullDuration)
+            else:
+                clip = clip.subclip(fullDuration - single_duration, fullDuration)
+                fullDuration -= single_duration
+
+            clip_file_name = 'Part_'+str(no_of_clips)+'_'+video_id+'_.mp4'
+            print(clip_file_name)
+            clip.write_videofile(video_clips_path+'/'+clip_file_name, audio_codec='aac', threads=4)
+            no_of_clips = no_of_clips - 1
+
+        print('Finished generating clips process.')
+        return {"Video id": video_id, 'File Name': video_filename}
+    except:
+        return {"Status":False, "ErrorMessage":"Internal Server Error.File not available."}
 
 
 @app.route('/searchVideo', methods=['POST'])
@@ -126,4 +187,5 @@ def searchVideo():
 
 if __name__ == "__main__":
     app.run(debug=True, port="5001")
+
 

@@ -1,0 +1,8 @@
+bs4
+Flask
+gunicorn
+pytube
+requests
+ffmpeg-python
+moviepy
+youtube_transcript_api

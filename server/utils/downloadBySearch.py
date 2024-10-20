@@ -1,4 +1,4 @@
-from pytube import Search
+from pytubefix import Search
 from .ytVideoDownloader import YouTubeVideoDownloader
 from .utils import formatDuration
 

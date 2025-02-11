@@ -5,8 +5,8 @@ from flask import Flask, request, send_file
 from flask import render_template
 from server.utils.ytVideoDownloader import YouTubeVideoDownloader
 from server.utils.downloadBySearch import DownloadBySearch
-from pytubefix.helpers import regex_search
-from pytubefix.exceptions import RegexMatchError
+from pytube.helpers import regex_search
+from pytube.exceptions import RegexMatchError
 
 # create app instance
 # app = Flask(__name__)
@@ -17,7 +17,7 @@ app = Flask(
     )
 
 # secret key
-app.config['SECRET_KEY'] = "AIzaSyDAs1GMYdmiF2JVXpdInFnsVK65Dr3vY98"
+app.config['SECRET_KEY'] = "AIzaSyDBsTomCrzkKxpLdFnYcdhOWkVFSu-DNnU"
 
 # methods
 methods = ['POST', "GET"]

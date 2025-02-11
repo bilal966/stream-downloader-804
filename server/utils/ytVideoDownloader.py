@@ -1,3 +1,5 @@
+from typing import Dict
+
 from pytubefix import YouTube
 from pytube.exceptions import AgeRestrictedError
 from .utils import formatDuration, AgeRestrictedVideoException
@@ -7,7 +9,7 @@ import requests
 class YouTubeVideoDownloader:
 
     def __init__(self, url: str) -> None:
-        self.__yt = YouTube(url)
+        self.__yt = YouTube(url,'WEB')
 
     def __convertToVideo(self, vid="", links=""):
         __cvt_api = "https://www.y2mate.com/mates/convertV2/index"
@@ -41,9 +43,9 @@ class YouTubeVideoDownloader:
                 "status": True,
                 "thumbnail_url": self.__yt.thumbnail_url
             }
-        except:
+        except KeyError:
             return {
-                "status": False
+                "status": "False"
             }
 
     def __getDuration(self) -> str:
@@ -52,20 +54,20 @@ class YouTubeVideoDownloader:
     def __getVideoId(self) -> str:
         try:
             return self.__yt.video_id
-        except:
+        except KeyError:
             return {
-                "status": False
+                "status": "False"
             }
 
     def __getTitle(self) -> str:
         try:
             return {
-                "status": True,
+                "status": "True",
                 "title": self.__yt.title
             }
-        except:
+        except KeyError:
             return {
-                "status": False
+                "status": "False"
             }
 
     def __getAudioStreams(self) -> list:
@@ -150,6 +152,7 @@ class YouTubeVideoDownloader:
 
     def getBasicDetails(self) -> dict:
         try:
+            print("yt object: ", self.__getTitle())
             return {
                 "status": True,
                 "title": self.__getTitle(),

@@ -88,8 +88,7 @@ function searchVideoByUrl(){
         Error(" *No video found", true, "error", "errorP",videoUrlSectionContainer);
  //video-url-section-container
         videoUrlSectionContainer.style.display = "none";
-    }
-    else {
+    } else {
         Error("", false);
         videoUrlSectionContainer.style.display = "block";
         new AjaxCalls().getBasicDetails($("#video-url").val())
@@ -103,14 +102,11 @@ function searchVideoBtnClick(){
         //err, open, errorRoot="error", errorP = "errorP", sectionToHide=null
         Error(err=" *No video found", open=true, errorRoot="error-ss", errorP='errorP-ss');
         searchSectionContainer.style.display = "none";
-    }
-    else {
+    } else {
         Error("", false);
         searchSectionContainer.style.display = "block";
 
         new AjaxCalls().searchVideo($("#search-video-name").val())
-
-
     }
 }
 
@@ -481,6 +477,7 @@ class AjaxCalls {
                 }
             }
         });
+
     }
 
     getStreamedData(video_url){

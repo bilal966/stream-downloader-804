@@ -807,7 +807,7 @@ section.tab-options-section {
 
 .video-cut-section, .video-url-section .search-bar-video-url-section, .searchby-section  .search-bar-video-url-section, .playlist-section  .search-bar-video-url-section{
     width: 100%;
-    display: flex;
+    display: flow;
     align-items: center;
     text-align: center;
     justify-content: center;
@@ -829,6 +829,7 @@ section.tab-options-section {
 .search-bar-video-url-section p {
     text-decoration: none;
     /*background: red;*/
+    display: inline-block;
     color: white;
     padding: 0.8rem 1rem;
     border-radius: 0.3rem;

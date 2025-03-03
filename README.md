@@ -14,9 +14,9 @@
 ## How to run.
 > ```$ git clone https://github.com/bilal966/stream-downloader-804.git```
 > 
-> ```$ cd youtube-video-audio-downloader```
+> ```$ cd stream-downloader-804```
 > 
 > ```$ pip install -r requirements.txt```
 > 
-> ```$ python app.py```
+> ```$ python main.py```
 
